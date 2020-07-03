@@ -1,11 +1,14 @@
 package com.training.connect_four;
 
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -19,6 +22,7 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,6 +39,7 @@ public class Controller implements Initializable {
 	private static String PLAYER_TWO = "Player Two";
 
 	private boolean isPlayerOneTurn = true;
+	private boolean isAllowedtoInsert = true; //to fix animation issues
 
 	private Disc[][] insertedDiscsArray = new Disc[ROWS][COLUMNS]; //For handling structural changes
 
@@ -58,6 +63,7 @@ public class Controller implements Initializable {
 				circle.setRadius(CIRCLE_DIAMETER / 2);
 				circle.setCenterX(CIRCLE_DIAMETER / 2);
 				circle.setCenterY(CIRCLE_DIAMETER / 2);
+				circle.setSmooth(true);
 
 				circle.setTranslateX(column * (CIRCLE_DIAMETER+5) + (CIRCLE_DIAMETER / 4));
 				circle.setTranslateY(row * (CIRCLE_DIAMETER+5)+ (CIRCLE_DIAMETER / 4));
@@ -112,7 +118,11 @@ public class Controller implements Initializable {
 			rectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
-					insertDisc(new Disc(isPlayerOneTurn),column);
+					if (isAllowedtoInsert)
+					{
+						isAllowedtoInsert = false; //Multiple discs cannot be inserted at once by multiple fast clicks
+						insertDisc(new Disc(isPlayerOneTurn),column);
+					}
 				}
 			});
 
@@ -152,6 +162,7 @@ public class Controller implements Initializable {
 			@Override
 			public void handle(ActionEvent actionEvent) {
 
+				isAllowedtoInsert = true; //After animation is finished, another disc can be inserted again
 				if (gameEnded(currentRow,column)) {
 					gameOver();
 				}
@@ -218,10 +229,45 @@ public class Controller implements Initializable {
 
 	private void gameOver() {
 
-		System.out.println("ZZZZZ");
 		String winner = isPlayerOneTurn?PLAYER_ONE:PLAYER_TWO;
-		System.out.println(winner + " has won!");
+		//System.out.println(winner + " has won!");
 
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Connect Four");
+		alert.setHeaderText("The winner is " +winner);
+		alert.setContentText("Want to play again? ");
+
+		ButtonType yesBtn = new ButtonType("Yes");
+		ButtonType noBtn = new ButtonType("No, Quit");
+		alert.getButtonTypes().setAll(yesBtn, noBtn);
+
+		Platform.runLater(() -> {
+			Optional<ButtonType> btnClicked = alert.showAndWait();
+			if (btnClicked.isPresent() && btnClicked.get() == yesBtn) {
+				resetGame();
+			} else {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
+
+		//alert.show();
+
+	}
+
+	public void resetGame() {
+		insertedDiscsPane.getChildren().clear(); // Remove all inserted discs from the pane
+
+		for (int row = 0; row < insertedDiscsArray.length; row++) {
+			for (int col = 0; col < insertedDiscsArray[row].length; col++) {
+				insertedDiscsArray[row][col] = null;
+			}
+		}
+
+		isPlayerOneTurn = true; // Let player start the game
+		playerNameLabel.setText(PLAYER_ONE);
+
+		createPlayground();
 	}
 
 	//New class for handling the circle to be inserted

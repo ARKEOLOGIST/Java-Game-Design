@@ -111,7 +111,7 @@ public class Main extends Application {
     }
 
     private void resetGame() {
-        //TODO
+        controller.resetGame();
     }
 
 

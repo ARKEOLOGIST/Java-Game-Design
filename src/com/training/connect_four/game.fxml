@@ -7,7 +7,7 @@
 <GridPane fx:id="rootGridPane" style="-fx-background-color: #D9F7F0;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.training.connect_four.Controller">
   <columnConstraints>
     <ColumnConstraints />
-    <ColumnConstraints />
+    <ColumnConstraints maxWidth="324.0" minWidth="258.0" prefWidth="258.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="25.0" />
