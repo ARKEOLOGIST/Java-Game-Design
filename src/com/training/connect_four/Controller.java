@@ -7,9 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -39,7 +37,9 @@ public class Controller implements Initializable {
 	private static String PLAYER_TWO = "Player Two";
 
 	private boolean isPlayerOneTurn = true;
-	private boolean isAllowedtoInsert = true; //to fix animation issues
+	private boolean isAllowedtoInsert = false; //to fix animation issues
+
+	private boolean isAllowedtoChange = true; //to fix naming change during game
 
 	private Disc[][] insertedDiscsArray = new Disc[ROWS][COLUMNS]; //For handling structural changes
 
@@ -51,6 +51,35 @@ public class Controller implements Initializable {
 
 	@FXML
 	public Label playerNameLabel;
+
+	@FXML
+	public Button setNames;
+
+	@FXML
+	public TextField setPlayerOneName;
+
+	@FXML
+	public TextField setPlayerTwoName;
+
+	public void reverse() {
+		isAllowedtoChange = true;
+		isAllowedtoInsert = false;
+	}
+
+	public void change() {
+		isAllowedtoChange = false;
+		isAllowedtoInsert = true;
+	}
+
+	public void nameChange(String s1,String s2) {
+		PLAYER_ONE = s1;
+		PLAYER_TWO = s2;
+		playerNameLabel.setText(s1);
+	}
+
+	public boolean get_change() {
+		return isAllowedtoChange;
+	}
 
 	private Shape createGameStructuralGrid() {
 		Shape rectangleWithHoles = new Rectangle((COLUMNS + 1) * CIRCLE_DIAMETER, (ROWS + 1) * CIRCLE_DIAMETER);
@@ -256,6 +285,8 @@ public class Controller implements Initializable {
 	}
 
 	public void resetGame() {
+		setPlayerOneName.setText("");
+		setPlayerTwoName.setText("");
 		insertedDiscsPane.getChildren().clear(); // Remove all inserted discs from the pane
 
 		for (int row = 0; row < insertedDiscsArray.length; row++) {
@@ -264,7 +295,11 @@ public class Controller implements Initializable {
 			}
 		}
 
-		isPlayerOneTurn = true; // Let player start the game
+		reverse(); //allow game restart
+
+		PLAYER_ONE = "Player One";
+		PLAYER_TWO = "Player Two";
+
 		playerNameLabel.setText(PLAYER_ONE);
 
 		createPlayground();

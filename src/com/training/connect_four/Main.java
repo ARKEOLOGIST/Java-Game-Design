@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -31,6 +32,36 @@ public class Main extends Application {
         menuPane.getChildren().add(menuBar);
 
         Scene scene = new Scene(rootGridPane);
+
+        Button setNames = controller.setNames;
+        TextField textField1 = controller.setPlayerOneName;
+        TextField textField2 = controller.setPlayerTwoName;
+
+        setNames.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (controller.get_change()) {
+                    String s1 = textField1.getText();
+                    String s2 = textField2.getText();
+                    if (s1.trim().isEmpty() || s2.trim().isEmpty() || s1.equals(s2)) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Invalid name entered");
+                        alert.setContentText("Please entered valid, different names in the two text boxes.");
+                        alert.show();
+                    } else {
+                        controller.change();
+                        controller.nameChange(s1,s2);
+                    }
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Cannot change names");
+                    alert.setContentText("You cannot change names during a game");
+                    alert.show();
+                }
+            }
+        });
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Connect Four");
@@ -97,7 +128,7 @@ public class Main extends Application {
     }
 
     private void about(int n) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);;
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         if (n == 1) {
             alert.setTitle("About Connect Four");
             alert.setHeaderText("How to Play?");

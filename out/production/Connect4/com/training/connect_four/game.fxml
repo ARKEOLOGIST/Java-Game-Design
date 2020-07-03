@@ -18,7 +18,13 @@
       <Pane fx:id="insertedDiscsPane" prefHeight="400.0" prefWidth="300.0" GridPane.rowIndex="1" />
       <VBox style="-fx-background-color: #2B3B4C;" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <children>
-            <Region prefHeight="200.0" prefWidth="200.0" />
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="setNames" layoutX="85.0" layoutY="110.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="89.0" text="Set Names" />
+                  <TextField fx:id="setPlayerOneName" layoutX="44.0" layoutY="31.0" prefHeight="25.0" prefWidth="168.0" />
+                  <TextField fx:id="setPlayerTwoName" layoutX="44.0" layoutY="66.0" prefHeight="25.0" prefWidth="168.0" />
+               </children>
+            </Pane>
             <Label fx:id="playerNameLabel" alignment="CENTER" prefHeight="43.0" prefWidth="308.0" text="Player One" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="29.0" />
